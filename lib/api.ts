@@ -4,19 +4,20 @@ import matter from 'gray-matter'
 
 const postsDirectory = join(process.cwd(), '_posts')
 
-export function getPostSlugs() {
+export function getPostSlugs(): string[] {
   return fs.readdirSync(postsDirectory)
 }
 
-export function getPostBySlug(slug: string, fields: string[] = []) {
+export type Items = {
+  [key: string]: string
+}
+
+export function getPostBySlug(slug: string, fields: string[] = []): Items {
   const realSlug = slug.replace(/\.md$/, '')
   const fullPath = join(postsDirectory, `${realSlug}.md`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
+  console.log(fileContents)
   const { data, content } = matter(fileContents)
-
-  type Items = {
-    [key: string]: string
-  }
 
   const items: Items = {}
 
@@ -37,7 +38,7 @@ export function getPostBySlug(slug: string, fields: string[] = []) {
   return items
 }
 
-export function getAllPosts(fields: string[] = []) {
+export function getAllPosts(fields: string[] = []): Items[] {
   const slugs = getPostSlugs()
   const posts = slugs
     .map((slug) => getPostBySlug(slug, fields))
